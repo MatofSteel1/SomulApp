@@ -5,6 +5,7 @@ namespace SomulApp
 {
     public class GreetingsPage : ContentPage
     {
+        private Image somulBanner;
         private Slider intensitySlider;
         private Slider hueSlider;
         private Slider warmthSlider;
@@ -17,6 +18,11 @@ namespace SomulApp
         private IBluetoothConnect bluetoothConnect;
         private string dataToSend;
 
+        // For easy multiplication in the Arduino
+        double scaledIntensity;
+
+        // We never want the hot to be completely red, for asthetic reasons
+        double tempPercentage = 0.9;
         Color lampColor = Color.Wheat;
 
         public GreetingsPage()
@@ -156,11 +162,14 @@ namespace SomulApp
                 VerticalOptions = LayoutOptions.FillAndExpand,
 
                 Children = {
-
+                    (somulBanner = new Image
+                    {
+                        Source = Device.RuntimePlatform == Device.Android ? ImageSource.FromFile("app_banner_medium.png") : ImageSource.FromFile("Images/app_banner_medium.png")
+                    }),
                     bluetoothIOLayout,
                     new Label
                     {
-                        Margin = new Thickness(20, 20 , 20, 0),
+                        Margin = new Thickness(20, 10 , 20, 0),
                         Text = "Lamp Intensity",
                         HorizontalTextAlignment = TextAlignment.Center,
                         FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
@@ -240,7 +249,8 @@ namespace SomulApp
                 sliderLabel.Text = " Max";
             }
 
-            dataToSend = "i" + intensitySlider.Value.ToString();
+            dataToSend = "i" + intensitySlider.Value.ToString() + "\0";
+            bluetoothConnect.WriteData(dataToSend);
         }
 
         // Changes the color viewer's hue in real time
@@ -248,21 +258,28 @@ namespace SomulApp
         {
             lampColor = hueView.BackgroundColor = Color.FromHsla(e.NewValue, 1.0, 0.5, 1.0);
 
-            dataToSend = "h" + ScaleColor(lampColor.R) + ScaleColor(lampColor.G) + ScaleColor(lampColor.B) + "\n";
+            dataToSend = "h" + ScaleColor(lampColor.R) + ":" + ScaleColor(lampColor.G) + ":" 
+                + ScaleColor(lampColor.B) + "\0";
             bluetoothConnect.WriteData(dataToSend);
         }
 
         // Changes the warmth viewer's color temperature in real time
         private void WarmthSliderChanged(object sender, ValueChangedEventArgs e)
         {
-            int red;
-            int green;
-            int blue;
+            double red;
+            double green;
+            double blue;
 
             long minTemp = 1500;
             long maxTemp = 15000;
 
-            double temp = 15000 - ((e.NewValue * (maxTemp - minTemp)) + minTemp);
+            // Converts slider value that is between 0-0.875 to a temperature value
+            // that is between 1500-15000 to run a bounded set of functions on.
+            // But, because we have to go from cold to hot, all of that is subtracted
+            // from our maximum temperature
+            double temp = maxTemp - (((e.NewValue * tempPercentage) * (maxTemp - minTemp)) + minTemp);
+
+            // Sets RGB for a given temperature range using a complex algorithm
             if (temp < 2000)
             {
                 red = 255;
@@ -288,9 +305,9 @@ namespace SomulApp
                 blue = 255;
             }
 
-            warmView.BackgroundColor = Color.FromRgba(red / 255, green / 255, blue / 255, 1.0);
-            //dataToSend = "w" + red.ToString() + green.ToString() + blue.ToString() + "\n";
-            //bluetoothConnect.WriteData(dataToSend);
+            lampColor = warmView.BackgroundColor = Color.FromRgba(red / 255, green / 255, blue / 255, 1.0);
+            dataToSend = "w" + red.ToString() + ":" + green.ToString() + ":" + blue.ToString() + "\0";
+            bluetoothConnect.WriteData(dataToSend);
         }
         
         private string ScaleColor(double d)

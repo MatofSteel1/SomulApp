@@ -2,6 +2,7 @@ C:\SomulApp\SomulApp\SomulApp.Android\bin\Debug\SomulApp.Android.dll
 C:\SomulApp\SomulApp\SomulApp.Android\bin\Debug\SomulApp.Android.pdb
 C:\SomulApp\SomulApp\SomulApp.Android\bin\Debug\com.companyname.SomulApp.apk
 C:\SomulApp\SomulApp\SomulApp.Android\bin\Debug\com.companyname.SomulApp-Signed.apk
+C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\SomulApp.Android.csprojResolveAssemblyReference.cache
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\SomulApp.Android.csproj.CoreCompileInputs.cache
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\SomulApp.Droid.App.xaml.g.cs
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\SomulApp.Droid.MainPage.xaml.g.cs
@@ -27,7 +28,7 @@ C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\SomulApp.Android.
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\Xamarin.Forms.Core.dll.mdb
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\Xamarin.Forms.Platform.Android.dll.mdb
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\Xamarin.Forms.Xaml.dll.mdb
-C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\SomulApp.Android.csprojResolveAssemblyReference.cache
+C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\res\drawable\app_banner_medium.png
 C:\SomulApp\SomulApp\SomulApp.Android\bin\Debug\SomulApp.Android.dll
 bin\Debug\FormsViewGroup.dll.mdb
 bin\Debug\Xamarin.Forms.Core.dll.mdb
