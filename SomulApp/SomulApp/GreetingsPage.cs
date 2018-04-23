@@ -11,9 +11,11 @@ namespace SomulApp
         private Slider warmthSlider;
         private Label sliderLabel;
         public Button bluetoothButton;
+        public Button alarmButton;
         private ContentView hueView;
         private ContentView warmView;
         private Switch partySwitch;
+        private DateTime time;
 
         private IBluetoothConnect bluetoothConnect;
         private string dataToSend;
@@ -30,26 +32,25 @@ namespace SomulApp
             bluetoothConnect = DependencyService.Get<IBluetoothConnect>();
             BackgroundColor = SomulColors.PrimaryDarker;
 
-            StackLayout bluetoothIOLayout = new StackLayout
+            StackLayout bluetoothAlarmIOLayout = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
 
                 Children = {
 
-                    new Label
-                    {
-                        Margin = new Thickness(20, 20, 20, 0),
-                        Text = "Connect Somul",
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
-                        TextColor = SomulColors.Accent
-                    },
-
                     (bluetoothButton  = new Button
                     {
                         Margin = new Thickness(20, 10, 10, 0),
                         Text = "Connect",
+                        TextColor = SomulColors.Accent,
+                        BackgroundColor = SomulColors.PrimaryDarkDarkest
+                    }),
+
+                    (alarmButton  = new Button
+                    {
+                        Margin = new Thickness(20, 10, 10, 0),
+                        Text = "Set Alarm",
                         TextColor = SomulColors.Accent,
                         BackgroundColor = SomulColors.PrimaryDarkDarkest
                     })
@@ -166,7 +167,7 @@ namespace SomulApp
                     {
                         Source = Device.RuntimePlatform == Device.Android ? ImageSource.FromFile("app_banner_medium.png") : ImageSource.FromFile("Images/app_banner_medium.png")
                     }),
-                    bluetoothIOLayout,
+                    bluetoothAlarmIOLayout,
                     new Label
                     {
                         Margin = new Thickness(20, 10 , 20, 0),
@@ -199,10 +200,16 @@ namespace SomulApp
             };
 
             bluetoothButton.Pressed += BluetoothButtonPressed;
+            alarmButton.Pressed += AlarmButtonPressed;
             intensitySlider.ValueChanged += IntensitySliderChanged;
             hueSlider.ValueChanged += HueSliderChanged;
             warmthSlider.ValueChanged += WarmthSliderChanged;
             partySwitch.Toggled += PartySwitchToggled;
+        }
+
+        private void AlarmButtonPressed(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void PartySwitchToggled(object sender, ToggledEventArgs e)
@@ -218,12 +225,20 @@ namespace SomulApp
                 System.Console.WriteLine("RIP");
             }
             bluetoothConnect.WriteData(dataToSend);
+            Console.WriteLine(dataToSend);
         }
 
         private void BluetoothButtonPressed(object sender, EventArgs e)
         {
             if (bluetoothButton.Text.Equals("Connect") && bluetoothConnect.Connect())
+            {
                 bluetoothButton.Text = "Disconnect";
+                time = DateTime.Now;
+                dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour > 12 ? (time.ToLocalTime().Hour - 12) : time.ToLocalTime().Hour)
+                    + AddLeadingZeros(time.ToLocalTime().Minute) + AddLeadingZeros(time.ToLocalTime().Second);
+                Console.WriteLine(dataToSend);
+                bluetoothConnect.WriteData(dataToSend);
+            }
             else if (bluetoothButton.Text.Equals("Disconnect") && bluetoothConnect.Disconnect())
                 bluetoothButton.Text = "Connect";
         }
@@ -249,8 +264,9 @@ namespace SomulApp
                 sliderLabel.Text = " Max";
             }
 
-            dataToSend = "i" + intensitySlider.Value.ToString() + "\0";
+            dataToSend = "i" + intensitySlider.Value.ToString();
             bluetoothConnect.WriteData(dataToSend);
+            Console.WriteLine(dataToSend);
         }
 
         // Changes the color viewer's hue in real time
@@ -258,9 +274,10 @@ namespace SomulApp
         {
             lampColor = hueView.BackgroundColor = Color.FromHsla(e.NewValue, 1.0, 0.5, 1.0);
 
-            dataToSend = "h" + ScaleColor(lampColor.R) + ":" + ScaleColor(lampColor.G) + ":" 
-                + ScaleColor(lampColor.B) + "\0";
+            dataToSend = "h" + AddLeadingZeros(ScaleColor(lampColor.R)) + AddLeadingZeros(ScaleColor(lampColor.G)) 
+                + AddLeadingZeros(ScaleColor(lampColor.B));
             bluetoothConnect.WriteData(dataToSend);
+            Console.WriteLine(dataToSend);
         }
 
         // Changes the warmth viewer's color temperature in real time
@@ -306,13 +323,24 @@ namespace SomulApp
             }
 
             lampColor = warmView.BackgroundColor = Color.FromRgba(red / 255, green / 255, blue / 255, 1.0);
-            dataToSend = "w" + red.ToString() + ":" + green.ToString() + ":" + blue.ToString() + "\0";
+            dataToSend = "h" + AddLeadingZeros((int)red) + AddLeadingZeros((int)green) + AddLeadingZeros((int)blue);
             bluetoothConnect.WriteData(dataToSend);
+            Console.WriteLine(dataToSend);
         }
         
-        private string ScaleColor(double d)
+        private int ScaleColor(double d)
         {
-            return ((int)Math.Floor(d * 255)).ToString();
+            return (int)Math.Floor(d * 255);
+        }
+        
+        private string AddLeadingZeros(int s)
+        {
+            if (s < 10)
+                return "00" + s.ToString();
+            else if (s < 100)
+                return "0" + s.ToString();
+            else
+                return s.ToString();
         }
     }
 }
