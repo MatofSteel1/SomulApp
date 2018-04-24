@@ -22,5 +22,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)SomulColors.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SplashScreen.cs" />
   </ItemGroup>
 </Project>

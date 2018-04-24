@@ -1,27 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Xamarin.Forms;
 
 namespace SomulApp
 {
-	public partial class App : Application
+    public partial class App : Application
 	{
-		public App ()
+		public App()
 		{
-			InitializeComponent();
+            InitializeComponent();
 
-			MainPage = new SomulApp.GreetingsPage();
-		}
+            MainPage = new SplashScreen();
+        }
 
 		protected override void OnStart ()
-		{
-			// Handle when your app starts
-		}
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                MainPage = new GreetingsPage();
+            });
+        }
 
-		protected override void OnSleep ()
+        protected override void OnSleep ()
 		{
 			// Handle when your app sleeps
 		}

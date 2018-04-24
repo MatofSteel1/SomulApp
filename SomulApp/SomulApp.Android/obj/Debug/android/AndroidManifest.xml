@@ -9,7 +9,8 @@
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <application android:label="SomulApp.Android" android:name="android.app.Application" android:allowBackup="true" android:icon="@drawable/icon" android:debuggable="true">
-    <activity android:configChanges="orientation|screenSize" android:icon="@drawable/icon" android:label="Somul Remote" android:theme="@style/MainTheme" android:name="md5210fd31d0914956df09dc85264f07ebb.MainActivity">
+    <activity android:configChanges="orientation|screenSize" android:icon="@drawable/icon" android:label="Somul Remote" android:screenOrientation="portrait" android:theme="@style/MainTheme" android:name="md5210fd31d0914956df09dc85264f07ebb.MainActivity" />
+    <activity android:configChanges="orientation|screenSize" android:icon="@drawable/icon" android:label="Somul Remote" android:noHistory="true" android:screenOrientation="portrait" android:theme="@style/MainTheme.Splash" android:name="md5210fd31d0914956df09dc85264f07ebb.SplashActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

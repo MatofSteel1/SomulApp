@@ -9,27 +9,29 @@ using Java.Util;
 using System.Threading.Tasks;
 using SomulApp.Droid;
 using Android.Content;
+using Android.Runtime;
 
-[assembly: Xamarin.Forms.Dependency(typeof(MainActivity))]
 namespace SomulApp.Droid
 {
-    [Activity(Label = "Somul Remote", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Somul Remote", Icon = "@drawable/icon", Theme = "@style/MainTheme",
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
+        ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, IBluetoothConnect
     {
         private static string address = "00:21:13:01:B3:56";
         private static UUID MY_UUID = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
         public BluetoothAdapter mSomulBluetoothAdapter = null;
         private BluetoothSocket BTSocket = null;
-
         private String result;
         private Stream outStream = null;
         private Stream inStream = null;
 
-        Android.Content.Context context;
+        Context context;
 
         protected override void OnCreate(Bundle bundle)
         {
+            AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironmentUnhandledExceptionRaiser;
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -148,7 +150,7 @@ namespace SomulApp.Droid
                 System.Console.WriteLine("Error Sending " + e.Message);
             }
 
-            Java.Lang.String message =  new Java.Lang.String(data);
+            Java.Lang.String message = new Java.Lang.String(data);
 
             byte[] msgBuffer = message.GetBytes();
 
@@ -164,8 +166,14 @@ namespace SomulApp.Droid
 
         public void ShowMessage(string msg)
         {
-            Context context = Application.Context;
+            context = Application.Context;
             Toast.MakeText(context, msg, ToastLength.Short).Show();
+        }
+
+        private void AndroidEnvironmentUnhandledExceptionRaiser(object sender, RaiseThrowableEventArgs e)
+        {
+            if (e.Exception.GetType() == typeof(Java.Lang.IllegalStateException))
+                Process.KillProcess(Process.MyPid());
         }
     }
 }

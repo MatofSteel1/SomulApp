@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:SomulApp"
              x:Class="SomulApp.MainPage">
 
-    <Label Text="Welcome to Xamarin.Forms!" 
+    <Label Text="Welcome to Somul Remote!" 
            VerticalOptions="Center"
            HorizontalOptions="Center"/>
 </ContentPage>

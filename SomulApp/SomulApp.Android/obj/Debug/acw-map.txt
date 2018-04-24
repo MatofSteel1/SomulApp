@@ -2,6 +2,10 @@ SomulApp.Droid.MainActivity, SomulApp.Android;md5210fd31d0914956df09dc85264f07eb
 SomulApp.Droid.MainActivity, SomulApp.Android, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5210fd31d0914956df09dc85264f07ebb.MainActivity
 SomulApp.Droid.MainActivity;md5210fd31d0914956df09dc85264f07ebb.MainActivity
 somulapp.droid.MainActivity;md5210fd31d0914956df09dc85264f07ebb.MainActivity
+SomulApp.Droid.SplashActivity, SomulApp.Android;md5210fd31d0914956df09dc85264f07ebb.SplashActivity
+SomulApp.Droid.SplashActivity, SomulApp.Android, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md5210fd31d0914956df09dc85264f07ebb.SplashActivity
+SomulApp.Droid.SplashActivity;md5210fd31d0914956df09dc85264f07ebb.SplashActivity
+somulapp.droid.SplashActivity;md5210fd31d0914956df09dc85264f07ebb.SplashActivity
 Android.Support.V4.Widget.SearchViewCompat/IOnCloseListenerImplementor, Xamarin.Android.Support.Compat;mono.android.support.v4.widget.SearchViewCompat_OnCloseListenerImplementor
 Android.Support.V4.Widget.SearchViewCompat+IOnCloseListenerImplementor, Xamarin.Android.Support.Compat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;mono.android.support.v4.widget.SearchViewCompat_OnCloseListenerImplementor
 Android.Support.V4.Widget.SearchViewCompat.IOnCloseListenerImplementor;mono.android.support.v4.widget.SearchViewCompat_OnCloseListenerImplementor

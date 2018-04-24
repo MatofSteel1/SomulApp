@@ -2826,13 +2826,13 @@ containing a value of this type.
         public static final int abc_vector_test=0x7f020052;
         public static final int app_banner_medium=0x7f020053;
         public static final int avd_hide_password=0x7f020054;
-        public static final int avd_hide_password_1=0x7f02010f;
-        public static final int avd_hide_password_2=0x7f020110;
-        public static final int avd_hide_password_3=0x7f020111;
+        public static final int avd_hide_password_1=0x7f020111;
+        public static final int avd_hide_password_2=0x7f020112;
+        public static final int avd_hide_password_3=0x7f020113;
         public static final int avd_show_password=0x7f020055;
-        public static final int avd_show_password_1=0x7f020112;
-        public static final int avd_show_password_2=0x7f020113;
-        public static final int avd_show_password_3=0x7f020114;
+        public static final int avd_show_password_1=0x7f020114;
+        public static final int avd_show_password_2=0x7f020115;
+        public static final int avd_show_password_3=0x7f020116;
         public static final int design_bottom_navigation_item_background=0x7f020056;
         public static final int design_fab_background=0x7f020057;
         public static final int design_ic_visibility=0x7f020058;
@@ -3014,10 +3014,12 @@ containing a value of this type.
         public static final int notification_bg_normal=0x7f020108;
         public static final int notification_bg_normal_pressed=0x7f020109;
         public static final int notification_icon_background=0x7f02010a;
-        public static final int notification_template_icon_bg=0x7f02010d;
-        public static final int notification_template_icon_low_bg=0x7f02010e;
+        public static final int notification_template_icon_bg=0x7f02010f;
+        public static final int notification_template_icon_low_bg=0x7f020110;
         public static final int notification_tile_bg=0x7f02010b;
         public static final int notify_panel_notification_icon_bg=0x7f02010c;
+        public static final int somul_logo=0x7f02010d;
+        public static final int splash_screen=0x7f02010e;
     }
     public static final class id {
         public static final int action0=0x7f08009e;
@@ -3361,7 +3363,7 @@ containing a value of this type.
         public static final int Animation_AppCompat_Dialog=0x7f0b00b0;
         public static final int Animation_AppCompat_DropDownUp=0x7f0b00b1;
         public static final int Animation_Design_BottomSheetDialog=0x7f0b0170;
-        public static final int AppCompatDialogStyle=0x7f0b018b;
+        public static final int AppCompatDialogStyle=0x7f0b018c;
         public static final int Base_AlertDialog_AppCompat=0x7f0b00b2;
         public static final int Base_AlertDialog_AppCompat_Light=0x7f0b00b3;
         public static final int Base_Animation_AppCompat_Dialog=0x7f0b00b4;
@@ -3524,6 +3526,7 @@ containing a value of this type.
         /**  Base theme applied no matter what API 
          */
         public static final int MainTheme_Base=0x7f0b018a;
+        public static final int MainTheme_Splash=0x7f0b018b;
         public static final int Platform_AppCompat=0x7f0b002d;
         public static final int Platform_AppCompat_Light=0x7f0b002e;
         public static final int Platform_ThemeOverlay_AppCompat=0x7f0b0094;

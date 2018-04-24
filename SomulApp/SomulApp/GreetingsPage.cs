@@ -16,6 +16,8 @@ namespace SomulApp
         private ContentView warmView;
         private Switch partySwitch;
         private DateTime time;
+        private DateTime alarmTime;
+        private TimePicker alarmPicker;
 
         private IBluetoothConnect bluetoothConnect;
         private string dataToSend;
@@ -32,12 +34,21 @@ namespace SomulApp
             bluetoothConnect = DependencyService.Get<IBluetoothConnect>();
             BackgroundColor = SomulColors.PrimaryDarker;
 
-            StackLayout bluetoothAlarmIOLayout = new StackLayout
+            StackLayout bluetoothIOLayout = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
 
                 Children = {
+
+                    new Label
+                    {
+                        Margin = new Thickness(20, 20, 20, 0),
+                        FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        TextColor = SomulColors.Accent,
+                        Text = "Connect Somul"
+                    },
 
                     (bluetoothButton  = new Button
                     {
@@ -45,14 +56,32 @@ namespace SomulApp
                         Text = "Connect",
                         TextColor = SomulColors.Accent,
                         BackgroundColor = SomulColors.PrimaryDarkDarkest
-                    }),
+                    })
+                }
+            };
 
-                    (alarmButton  = new Button
+            StackLayout alarmLayout = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+
+                Children = {
+
+                    new Label
                     {
-                        Margin = new Thickness(20, 10, 10, 0),
+                        Margin = new Thickness(20, 0 , 20, 0),
                         Text = "Set Alarm",
+                        HorizontalTextAlignment = TextAlignment.Start,
+                        FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
+                        TextColor = SomulColors.Accent
+                    },
+
+                    (alarmPicker = new TimePicker
+                    {
+                        Margin = new Thickness(40, 0, 15, 0),
+                        BackgroundColor = SomulColors.PrimaryDarkDarkest,
                         TextColor = SomulColors.Accent,
-                        BackgroundColor = SomulColors.PrimaryDarkDarkest
+                        HorizontalOptions = LayoutOptions.FillAndExpand
                     })
                 }
             };
@@ -163,11 +192,13 @@ namespace SomulApp
                 VerticalOptions = LayoutOptions.FillAndExpand,
 
                 Children = {
+
                     (somulBanner = new Image
                     {
                         Source = Device.RuntimePlatform == Device.Android ? ImageSource.FromFile("app_banner_medium.png") : ImageSource.FromFile("Images/app_banner_medium.png")
                     }),
-                    bluetoothAlarmIOLayout,
+                    bluetoothIOLayout,
+                    alarmLayout,
                     new Label
                     {
                         Margin = new Thickness(20, 10 , 20, 0),
@@ -200,16 +231,39 @@ namespace SomulApp
             };
 
             bluetoothButton.Pressed += BluetoothButtonPressed;
-            alarmButton.Pressed += AlarmButtonPressed;
+            alarmPicker.PropertyChanged += AlarmPickerPropertyChanged;
             intensitySlider.ValueChanged += IntensitySliderChanged;
             hueSlider.ValueChanged += HueSliderChanged;
             warmthSlider.ValueChanged += WarmthSliderChanged;
             partySwitch.Toggled += PartySwitchToggled;
         }
 
-        private void AlarmButtonPressed(object sender, EventArgs e)
+        private void AlarmPickerPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            time = DateTime.Now;
+            dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour)
+                + AddLeadingZeros(time.ToLocalTime().Minute) + AddLeadingZeros(time.ToLocalTime().Second);
+            bluetoothConnect.WriteData(dataToSend);
+            Console.WriteLine(dataToSend);
+
+            dataToSend = "a" + AddLeadingZeros(alarmPicker.Time.Hours) + AddLeadingZeros(alarmPicker.Time.Minutes);
+            bluetoothConnect.WriteData(dataToSend);
+            Console.WriteLine(dataToSend);
+        }
+
+        private void BluetoothButtonPressed(object sender, EventArgs e)
+        {
+            if (bluetoothButton.Text.Equals("Connect") && bluetoothConnect.Connect())
+            {
+                bluetoothButton.Text = "Disconnect";
+                time = DateTime.Now;
+                dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour) + AddLeadingZeros(time.ToLocalTime().Minute)
+                    + AddLeadingZeros(time.ToLocalTime().Second);
+                Console.WriteLine(dataToSend);
+                bluetoothConnect.WriteData(dataToSend);
+            }
+            else if (bluetoothButton.Text.Equals("Disconnect") && bluetoothConnect.Disconnect())
+                bluetoothButton.Text = "Connect";
         }
 
         private void PartySwitchToggled(object sender, ToggledEventArgs e)
@@ -226,21 +280,6 @@ namespace SomulApp
             }
             bluetoothConnect.WriteData(dataToSend);
             Console.WriteLine(dataToSend);
-        }
-
-        private void BluetoothButtonPressed(object sender, EventArgs e)
-        {
-            if (bluetoothButton.Text.Equals("Connect") && bluetoothConnect.Connect())
-            {
-                bluetoothButton.Text = "Disconnect";
-                time = DateTime.Now;
-                dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour > 12 ? (time.ToLocalTime().Hour - 12) : time.ToLocalTime().Hour)
-                    + AddLeadingZeros(time.ToLocalTime().Minute) + AddLeadingZeros(time.ToLocalTime().Second);
-                Console.WriteLine(dataToSend);
-                bluetoothConnect.WriteData(dataToSend);
-            }
-            else if (bluetoothButton.Text.Equals("Disconnect") && bluetoothConnect.Disconnect())
-                bluetoothButton.Text = "Connect";
         }
 
         // TODO: Set the initial slider to whatever the lamp's intensity is
@@ -332,7 +371,7 @@ namespace SomulApp
         {
             return (int)Math.Floor(d * 255);
         }
-        
+
         private string AddLeadingZeros(int s)
         {
             if (s < 10)
