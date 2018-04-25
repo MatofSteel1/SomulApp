@@ -22,9 +22,7 @@ namespace SomulApp
                     new ActivityIndicator
                     {
                         Color = SomulColors.Accent,
-                        IsRunning = true,
-                        IsEnabled = true,
-                        IsVisible = true
+                        IsRunning = true
                     }
                 }
             };

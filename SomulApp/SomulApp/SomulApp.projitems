@@ -18,6 +18,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)IBluetoothConnect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GreetingsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IToastMessageDisplay.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

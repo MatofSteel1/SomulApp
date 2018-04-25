@@ -16,7 +16,7 @@ namespace SomulApp.Droid
     [Activity(Label = "Somul Remote", Icon = "@drawable/icon", Theme = "@style/MainTheme",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
         ScreenOrientation = ScreenOrientation.Portrait)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, IBluetoothConnect
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, IBluetoothConnect, IToastMessageDisplay
     {
         private static string address = "00:21:13:01:B3:56";
         private static UUID MY_UUID = UUID.FromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -30,8 +30,6 @@ namespace SomulApp.Droid
 
         protected override void OnCreate(Bundle bundle)
         {
-            AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironmentUnhandledExceptionRaiser;
-
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -168,12 +166,6 @@ namespace SomulApp.Droid
         {
             context = Application.Context;
             Toast.MakeText(context, msg, ToastLength.Short).Show();
-        }
-
-        private void AndroidEnvironmentUnhandledExceptionRaiser(object sender, RaiseThrowableEventArgs e)
-        {
-            if (e.Exception.GetType() == typeof(Java.Lang.IllegalStateException))
-                Process.KillProcess(Process.MyPid());
         }
     }
 }

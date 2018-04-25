@@ -17,7 +17,6 @@ C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\res\layout\toolbar.xml
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\res\values\styles.xml
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\res\drawable\app_banner_medium.png
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\res\drawable\splash_screen.xml
-C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\res\drawable\somul_logo.png
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\R.cs.flag
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\uploadflags.txt
 C:\SomulApp\SomulApp\SomulApp.Android\bin\Debug\FormsViewGroup.dll.mdb
@@ -30,6 +29,8 @@ C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\SomulApp.Android.
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\Xamarin.Forms.Core.dll.mdb
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\Xamarin.Forms.Platform.Android.dll.mdb
 C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\android\assets\Xamarin.Forms.Xaml.dll.mdb
+C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\SomulApp.Android.csprojResolveAssemblyReference.cache
+C:\SomulApp\SomulApp\SomulApp.Android\obj\Debug\res\drawable-xxhdpi\somul_logo.png
 C:\SomulApp\SomulApp\SomulApp.Android\bin\Debug\SomulApp.Android.dll
 bin\Debug\FormsViewGroup.dll.mdb
 bin\Debug\Xamarin.Forms.Core.dll.mdb

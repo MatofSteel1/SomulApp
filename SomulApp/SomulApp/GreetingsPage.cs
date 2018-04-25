@@ -5,13 +5,14 @@ namespace SomulApp
 {
     public class GreetingsPage : ContentPage
     {
+        // Elements to display on the content page
         private Image somulBanner;
         private Slider intensitySlider;
         private Slider hueSlider;
         private Slider warmthSlider;
         private Label sliderLabel;
         public Button bluetoothButton;
-        public Button alarmButton;
+        public Button cancelAlarmButton;
         private ContentView hueView;
         private ContentView warmView;
         private Switch partySwitch;
@@ -19,8 +20,15 @@ namespace SomulApp
         private DateTime alarmTime;
         private TimePicker alarmPicker;
 
+        // For connecting and sending bluetooth data
         private IBluetoothConnect bluetoothConnect;
         private string dataToSend;
+
+        // For displaying toast messages
+        IToastMessageDisplay messageDisplay;
+
+        // For changing the visiblity of the cancel alarm button
+        bool isAlarmSet = false;
 
         // For easy multiplication in the Arduino
         double scaledIntensity;
@@ -32,6 +40,8 @@ namespace SomulApp
         public GreetingsPage()
         {
             bluetoothConnect = DependencyService.Get<IBluetoothConnect>();
+            messageDisplay = DependencyService.Get<IToastMessageDisplay>();
+
             BackgroundColor = SomulColors.PrimaryDarker;
 
             StackLayout bluetoothIOLayout = new StackLayout
@@ -69,8 +79,8 @@ namespace SomulApp
 
                     new Label
                     {
-                        Margin = new Thickness(20, 0 , 20, 0),
-                        Text = "Set Alarm",
+                        Margin = new Thickness(20, 15, 10, 0),
+                        Text = "Alarm",
                         HorizontalTextAlignment = TextAlignment.Start,
                         FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
                         TextColor = SomulColors.Accent
@@ -78,10 +88,19 @@ namespace SomulApp
 
                     (alarmPicker = new TimePicker
                     {
-                        Margin = new Thickness(40, 0, 15, 0),
+                        Margin = new Thickness(10, 10, 15, 0),
                         BackgroundColor = SomulColors.PrimaryDarkDarkest,
                         TextColor = SomulColors.Accent,
                         HorizontalOptions = LayoutOptions.FillAndExpand
+                    }),
+
+                    (cancelAlarmButton = new Button
+                    {
+                        Margin = new Thickness(5, 10, 15, 0),
+                        Text = "Cancel Alarm",
+                        TextColor = SomulColors.Accent,
+                        BackgroundColor = SomulColors.PrimaryDarkDarkest,
+                        IsVisible = isAlarmSet
                     })
                 }
             };
@@ -195,7 +214,8 @@ namespace SomulApp
 
                     (somulBanner = new Image
                     {
-                        Source = Device.RuntimePlatform == Device.Android ? ImageSource.FromFile("app_banner_medium.png") : ImageSource.FromFile("Images/app_banner_medium.png")
+                        Source = Device.RuntimePlatform == Device.Android ? ImageSource.FromFile("app_banner_medium.png")
+                            : ImageSource.FromFile("Images/app_banner_medium.png")
                     }),
                     bluetoothIOLayout,
                     alarmLayout,
@@ -231,41 +251,100 @@ namespace SomulApp
             };
 
             bluetoothButton.Pressed += BluetoothButtonPressed;
-            alarmPicker.PropertyChanged += AlarmPickerPropertyChanged;
+            alarmPicker.PropertyChanged += AlarmPickerPropertyChanged; ;
+            cancelAlarmButton.Pressed += CancelAlarmButtonPressed;
             intensitySlider.ValueChanged += IntensitySliderChanged;
             hueSlider.ValueChanged += HueSliderChanged;
             warmthSlider.ValueChanged += WarmthSliderChanged;
             partySwitch.Toggled += PartySwitchToggled;
         }
 
+        // Send the picked alarm time and update GUI
         private void AlarmPickerPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            // Update the time for redundant accuracy
             time = DateTime.Now;
             dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour)
                 + AddLeadingZeros(time.ToLocalTime().Minute) + AddLeadingZeros(time.ToLocalTime().Second);
             bluetoothConnect.WriteData(dataToSend);
             Console.WriteLine(dataToSend);
 
-            dataToSend = "a" + AddLeadingZeros(alarmPicker.Time.Hours) + AddLeadingZeros(alarmPicker.Time.Minutes);
-            bluetoothConnect.WriteData(dataToSend);
-            Console.WriteLine(dataToSend);
+            if ((e.PropertyName == TimePicker.TimeProperty.PropertyName) && alarmPicker.IsFocused)
+            {
+                // Send alarm time
+                dataToSend = "a" + AddLeadingZeros(alarmPicker.Time.Hours) + AddLeadingZeros(alarmPicker.Time.Minutes);
+                bluetoothConnect.WriteData(dataToSend);
+                Console.WriteLine(dataToSend);
+
+                // Display toast for Android
+                if (Device.RuntimePlatform == Device.Android)
+                {
+                    messageDisplay.ShowMessage("Alarm set for " + ((alarmPicker.Time.Hours > 12) ? (alarmPicker.Time.Hours - 12)
+                        : alarmPicker.Time.Hours) + ":" + TimeDisplay(alarmPicker.Time.Minutes));
+                }
+
+                // Make the cancel alarm button visible
+                isAlarmSet = true;
+                cancelAlarmButton.IsVisible = true;
+            }
         }
 
+        // Handle canceled alarm data sending and GUI updates
+        private void CancelAlarmButtonPressed(object sender, EventArgs e)
+        {
+            if (cancelAlarmButton.Text.Equals("Cancel Alarm"))
+            {
+                // Make the alarm cancel button invisible
+                isAlarmSet = false;
+                cancelAlarmButton.IsVisible = false;
+
+                // Update the time for redundant accuracy
+                time = DateTime.Now;
+                dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour) + AddLeadingZeros(time.ToLocalTime().Minute)
+                    + AddLeadingZeros(time.ToLocalTime().Second);
+                bluetoothConnect.WriteData(dataToSend);
+                Console.WriteLine(dataToSend);
+
+                // Send the stop alarm command
+                dataToSend = "as";
+                bluetoothConnect.WriteData(dataToSend);
+                Console.WriteLine(dataToSend);
+
+                // Display toast for Android
+                if (Device.RuntimePlatform == Device.Android)
+                    messageDisplay.ShowMessage("Alarm canceled");
+            }
+        }
+        
+        // Handle connection to lamp
         private void BluetoothButtonPressed(object sender, EventArgs e)
         {
             if (bluetoothButton.Text.Equals("Connect") && bluetoothConnect.Connect())
             {
-                bluetoothButton.Text = "Disconnect";
+                // Update the time
                 time = DateTime.Now;
                 dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour) + AddLeadingZeros(time.ToLocalTime().Minute)
                     + AddLeadingZeros(time.ToLocalTime().Second);
-                Console.WriteLine(dataToSend);
                 bluetoothConnect.WriteData(dataToSend);
+                Console.WriteLine(dataToSend);
+
+                // Set color to white
+                dataToSend = "h255255255";
+                bluetoothConnect.WriteData(dataToSend);
+                Console.WriteLine(dataToSend);
+
+                // Set intensity to zero
+                dataToSend = "i0";
+                bluetoothConnect.WriteData(dataToSend);
+                Console.WriteLine(dataToSend);
+
+                bluetoothButton.Text = "Disconnect";
             }
             else if (bluetoothButton.Text.Equals("Disconnect") && bluetoothConnect.Disconnect())
                 bluetoothButton.Text = "Connect";
         }
 
+        // Send partymode trigger
         private void PartySwitchToggled(object sender, ToggledEventArgs e)
         {
             if (partySwitch.IsToggled)
@@ -313,7 +392,7 @@ namespace SomulApp
         {
             lampColor = hueView.BackgroundColor = Color.FromHsla(e.NewValue, 1.0, 0.5, 1.0);
 
-            dataToSend = "h" + AddLeadingZeros(ScaleColor(lampColor.R)) + AddLeadingZeros(ScaleColor(lampColor.G)) 
+            dataToSend = "h" + AddLeadingZeros(ScaleColor(lampColor.R)) + AddLeadingZeros(ScaleColor(lampColor.G))
                 + AddLeadingZeros(ScaleColor(lampColor.B));
             bluetoothConnect.WriteData(dataToSend);
             Console.WriteLine(dataToSend);
@@ -351,7 +430,7 @@ namespace SomulApp
             else if (temp < 6600)
             {
                 red = 255;
-                green = (int)Math.Floor(288.1221695283 * (Math.Pow((temp/100) - 60, -0.0755148492)));
+                green = (int)Math.Floor(288.1221695283 * (Math.Pow((temp / 100) - 60, -0.0755148492)));
                 blue = (int)Math.Floor(138.5177312231 * Math.Log(temp / 100) - 305.0447927307);
             }
             else
@@ -366,20 +445,31 @@ namespace SomulApp
             bluetoothConnect.WriteData(dataToSend);
             Console.WriteLine(dataToSend);
         }
-        
+
+        // Turns a color from 0-1 to 0-255
         private int ScaleColor(double d)
         {
             return (int)Math.Floor(d * 255);
         }
 
-        private string AddLeadingZeros(int s)
+        // A way to ensure consistent parsing for sent data
+        private string AddLeadingZeros(int i)
         {
-            if (s < 10)
-                return "00" + s.ToString();
-            else if (s < 100)
-                return "0" + s.ToString();
+            if (i < 10)
+                return "00" + i.ToString();
+            else if (i < 100)
+                return "0" + i.ToString();
             else
-                return s.ToString();
+                return i.ToString();
+        }
+
+        // A formater to display time correctly
+        private string TimeDisplay(int i)
+        {
+            if (i >= 10)
+                return i.ToString();
+            else
+                return "0" + i.ToString();
         }
     }
 }
