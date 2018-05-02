@@ -1,5 +1,5 @@
-SomulApp\SomulApp.iOS\obj
-SomulApp\SomulApp.iOS\bin
-SomulApp\SomulApp.Android\obj
-SomulApp\SomulApp.Android\bin
-SomulApp\SomulApp.UWP
+SomulApp.iOS\obj
+SomulApp.iOS\bin
+SomulApp.Android\obj
+SomulApp.Android\bin
+SomulApp.UWP

@@ -262,13 +262,6 @@ namespace SomulApp
         // Send the picked alarm time and update GUI
         private void AlarmPickerPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            // Update the time for redundant accuracy
-            time = DateTime.Now;
-            dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour)
-                + AddLeadingZeros(time.ToLocalTime().Minute) + AddLeadingZeros(time.ToLocalTime().Second);
-            bluetoothConnect.WriteData(dataToSend);
-            Console.WriteLine(dataToSend);
-
             if ((e.PropertyName == TimePicker.TimeProperty.PropertyName) && alarmPicker.IsFocused)
             {
                 // Send alarm time
@@ -297,13 +290,6 @@ namespace SomulApp
                 // Make the alarm cancel button invisible
                 isAlarmSet = false;
                 cancelAlarmButton.IsVisible = false;
-
-                // Update the time for redundant accuracy
-                time = DateTime.Now;
-                dataToSend = "t" + AddLeadingZeros(time.ToLocalTime().Hour) + AddLeadingZeros(time.ToLocalTime().Minute)
-                    + AddLeadingZeros(time.ToLocalTime().Second);
-                bluetoothConnect.WriteData(dataToSend);
-                Console.WriteLine(dataToSend);
 
                 // Send the stop alarm command
                 dataToSend = "as";
